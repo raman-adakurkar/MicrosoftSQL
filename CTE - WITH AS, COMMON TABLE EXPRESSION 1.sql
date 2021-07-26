@@ -1,0 +1,10 @@
+WITH SALES_DETAILS
+AS (
+	SELECT YEAR(OrderDate) AS OrderYear, SalesOrderID
+	FROM Sales.SalesOrderHeader
+	)
+
+SELECT OrderYear, COUNT(*) AS SALES_COUNT
+FROM SALES_DETAILS
+WHERE OrderYear = 2006
+GROUP BY OrderYear
