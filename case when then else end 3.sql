@@ -1,0 +1,39 @@
+WITH Details
+AS(
+	SELECT 
+		HRE.BusinessEntityID AS ID, 
+		PP.FirstName AS FirstName, 
+		PP.LastName LastName, 
+		DATEDIFF(YEAR, BirthDate, GETDATE()) AS AGE
+	FROM HumanResources.Employee HRE
+	LEFT OUTER JOIN Person.Person PP
+	ON HRE.BusinessEntityID = PP.BusinessEntityID
+),
+AgeDetails AS(
+	SELECT ID, FirstName, LastName, AGE, 
+		CASE
+			WHEN AGE < 12 THEN 'CHILD'
+			WHEN AGE BETWEEN 13 AND 20 THEN 'TEEN'
+			WHEN AGE BETWEEN 21 AND 40 THEN 'ADULT'
+			WHEN AGE BETWEEN 41 AND 64 THEN 'ELDER'
+			WHEN AGE > 64 THEN 'OLD'
+		END AS AgeGroup
+	FROM Details
+)
+
+SELECT 
+	ID, 
+	FirstName, 
+	LastName, 
+	AGE,
+	AgeGroup
+FROM AgeDetails
+ORDER BY (
+	CASE
+		WHEN AGE < 12 THEN 1
+		WHEN AGE BETWEEN 13 AND 20 THEN 2
+		WHEN AGE BETWEEN 21 AND 40 THEN 3
+		WHEN AGE BETWEEN 41 AND 64 THEN 4
+		WHEN AGE > 64 THEN 5
+	END
+)
